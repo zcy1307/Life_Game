@@ -25,7 +25,6 @@ function Map(canvasId, size, numOfLivingCells) {
     }
 
     this.Refresh = function() {
-        this.draw(1000);
         for (var i = 0; i < this.size; i++)
             for (var j = 0; j < this.size; j++) {
                 var cell = this.cellsArray[i][j];
@@ -36,10 +35,17 @@ function Map(canvasId, size, numOfLivingCells) {
             for (var j = 0; j < this.size; j++) {
                 var cell = this.cellsArray[i][j];
                 var livingCellsAround = LivingCellsAround(cell, this);
-                if (livingCellsAround == 3)
-                    cell.nextStatus = 1;
-                else if (livingCellsAround != 2)
-                    cell.nextStatus = 0;
+                if (livingCellsAround == 3) {
+                    if (!cell.nextStatus) {
+                        cell.nextStatus = 1;
+                        this.numOfLivingCells++;
+                    }
+                } else if (livingCellsAround != 2) {
+                    if (cell.nextStatus) {
+                        cell.nextStatus = 0;
+                        this.numOfLivingCells--;
+                    }
+                }
             }
     }
 
@@ -51,6 +57,7 @@ function Map(canvasId, size, numOfLivingCells) {
 
         for (var i = 0; i < this.size; i++)
             for (var j = 0; j < this.size; j++) {
+                //每个细胞上下左右各留出1px的空白作为网格线
                 x = i * len + 1;
                 y = j * len + 1;
                 if (!this.cellsArray[i][j].nextStatus)
